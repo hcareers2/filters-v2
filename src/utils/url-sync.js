@@ -135,6 +135,26 @@ export function updateUrlFromWized(Wized) {
 }
 
 export function initUrlSync(Wized) {
-  applyUrlParamsToWized(Wized);
+  let paramsApplied = false;
+
+  const applyOnce = () => {
+    if (!paramsApplied) {
+      applyUrlParamsToWized(Wized);
+      paramsApplied = true;
+    }
+  };
+
+  // Patch execute to ensure params are applied before the first request runs
+  if (Wized.requests && typeof Wized.requests.execute === 'function') {
+    const originalExecute = Wized.requests.execute.bind(Wized.requests);
+    Wized.requests.execute = async (...args) => {
+      applyOnce();
+      return originalExecute(...args);
+    };
+  }
+
+  // Apply immediately for cases where execute was already called
+  applyOnce();
+
   Wized.on('requestend', () => updateUrlFromWized(Wized));
 }
