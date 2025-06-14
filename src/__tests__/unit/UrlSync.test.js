@@ -22,7 +22,10 @@ describe('URL Sync Utilities', () => {
     if (typeof originalReadyState === 'undefined') {
       delete document.readyState;
     } else {
-      Object.defineProperty(document, 'readyState', { value: originalReadyState, configurable: true });
+      Object.defineProperty(document, 'readyState', {
+        value: originalReadyState,
+        configurable: true,
+      });
     }
     document.addEventListener = originalAddEventListener;
   });
