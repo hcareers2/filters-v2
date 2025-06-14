@@ -18,6 +18,16 @@ describe('URL Sync Utilities', () => {
   });
 
   test('applyUrlParamsToWized sets variables from query string', () => {
+    document.body.innerHTML = '';
+    const searchInput = document.createElement('input');
+    searchInput.setAttribute('w-filter-search-variable', 'foo');
+
+    const checkbox = document.createElement('label');
+    checkbox.setAttribute('w-filter-checkbox-variable', 'list');
+
+    document.body.appendChild(searchInput);
+    document.body.appendChild(checkbox);
+
     setSearch('?foo=bar&list=a,b');
     const Wized = { data: { v: { foo: '', list: [] } } };
     applyUrlParamsToWized(Wized);
@@ -64,8 +74,32 @@ describe('URL Sync Utilities', () => {
     expect(customB.classList.contains('w--redirected-checked')).toBe(true);
   });
 
+  test('syncInputsFromWized uses empty string for null values', () => {
+    document.body.innerHTML = '';
+
+    const searchInput = document.createElement('input');
+    searchInput.setAttribute('w-filter-search-variable', 'foo');
+
+    document.body.appendChild(searchInput);
+
+    const Wized = { data: { v: { foo: null } } };
+    applyUrlParamsToWized(Wized);
+
+    expect(searchInput.value).toBe('');
+  });
+
   test('updateUrlFromWized writes variables to query string', () => {
-    const Wized = { data: { v: { foo: 'bar', empty: '', list: ['a', 'b'] } } };
+    document.body.innerHTML = '';
+    const searchInput = document.createElement('input');
+    searchInput.setAttribute('w-filter-search-variable', 'foo');
+    const checkbox = document.createElement('label');
+    checkbox.setAttribute('w-filter-checkbox-variable', 'list');
+    document.body.appendChild(searchInput);
+    document.body.appendChild(checkbox);
+
+    const Wized = {
+      data: { v: { foo: 'bar', empty: '', list: ['a', 'b'], extra: 'x' } },
+    };
     setSearch('');
     const replaceSpy = jest
       .spyOn(window.history, 'replaceState')
