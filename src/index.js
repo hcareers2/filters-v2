@@ -7,6 +7,7 @@ import FilterSortManager from './filters/filter-sort.js';
 import FilterPaginationManager from './filters/filter-pagination.js';
 import FilterResetManager from './filters/filter-reset.js';
 import FilterSearchManager from './filters/filter-search.js';
+import { initUrlSync } from './utils/url-sync.js';
 
 // Export all components
 export { FilterCheckboxManager };
@@ -23,6 +24,9 @@ export { FilterSearchManager };
 if (typeof window !== 'undefined') {
   window.Wized = window.Wized || [];
   window.Wized.push((Wized) => {
+    // Sync filters with URL parameters
+    initUrlSync(Wized);
+
     // Initialize chips manager first since other managers depend on it
     new FilterChipsManager(Wized);
 
