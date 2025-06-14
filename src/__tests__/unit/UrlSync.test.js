@@ -8,13 +8,26 @@ function setSearch(search) {
 
 describe('URL Sync Utilities', () => {
   let originalLocation;
+  let originalReadyState;
+  let originalAddEventListener;
   beforeEach(() => {
     originalLocation = window.location;
     setSearch('');
+    originalReadyState = document.readyState;
+    originalAddEventListener = document.addEventListener;
   });
 
   afterEach(() => {
     window.location = originalLocation;
+    if (typeof originalReadyState === 'undefined') {
+      delete document.readyState;
+    } else {
+      Object.defineProperty(document, 'readyState', {
+        value: originalReadyState,
+        configurable: true,
+      });
+    }
+    document.addEventListener = originalAddEventListener;
   });
 
   test('applyUrlParamsToWized sets variables from query string', () => {
@@ -117,6 +130,7 @@ describe('URL Sync Utilities', () => {
     const input = document.createElement('input');
     input.setAttribute('w-filter-search-variable', 'foo');
     document.body.appendChild(input);
+    Object.defineProperty(document, 'readyState', { value: 'complete', configurable: true });
     setSearch('?foo=baz');
     const execute = jest.fn().mockResolvedValue('ok');
     const Wized = { data: { v: { foo: '' } }, requests: { execute }, on: jest.fn() };
@@ -125,6 +139,33 @@ describe('URL Sync Utilities', () => {
     const result = await Wized.requests.execute('req');
     expect(result).toBe('ok');
     expect(execute).toHaveBeenCalledWith('req');
+  });
+
+  test('initUrlSync waits for DOMContentLoaded when document is loading', async () => {
+    document.body.innerHTML = '';
+    const input = document.createElement('input');
+    input.setAttribute('w-filter-search-variable', 'foo');
+    document.body.appendChild(input);
+    Object.defineProperty(document, 'readyState', { value: 'loading', configurable: true });
+    const listeners = {};
+    document.addEventListener = jest.fn((evt, cb) => {
+      if (!listeners[evt]) listeners[evt] = [];
+      listeners[evt].push(cb);
+    });
+    setSearch('?foo=late');
+    const execute = jest.fn().mockResolvedValue('ok');
+    const Wized = { data: { v: { foo: '' } }, requests: { execute }, on: jest.fn() };
+    initUrlSync(Wized);
+    expect(Wized.data.v.foo).toBe('');
+
+    const execPromise = Wized.requests.execute('req');
+    expect(execute).not.toHaveBeenCalled();
+
+    listeners.DOMContentLoaded.forEach((cb) => cb());
+    const result = await execPromise;
+    expect(result).toBe('ok');
+    expect(execute).toHaveBeenCalledWith('req');
+    expect(Wized.data.v.foo).toBe('late');
   });
 
   test('patched execute behaves normally with no params', async () => {
