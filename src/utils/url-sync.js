@@ -169,5 +169,10 @@ export function initUrlSync(Wized) {
     applyOnce();
   }
 
+  // Ensure params override persisted state after all resources load
+  if (typeof window !== 'undefined') {
+    window.addEventListener('load', applyOnce, { once: true });
+  }
+
   Wized.on('requestend', () => updateUrlFromWized(Wized));
 }
