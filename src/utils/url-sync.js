@@ -144,17 +144,30 @@ export function initUrlSync(Wized) {
     }
   };
 
+  const domReady = new Promise((resolve) => {
+    if (typeof document === 'undefined' || document.readyState !== 'loading') {
+      resolve();
+    } else {
+      document.addEventListener('DOMContentLoaded', resolve, { once: true });
+    }
+  });
+
   // Patch execute to ensure params are applied before the first request runs
   if (Wized.requests && typeof Wized.requests.execute === 'function') {
     const originalExecute = Wized.requests.execute.bind(Wized.requests);
     Wized.requests.execute = async (...args) => {
+      await domReady;
       applyOnce();
       return originalExecute(...args);
     };
   }
 
-  // Apply immediately for cases where execute was already called
-  applyOnce();
+  // Apply params once DOM is ready
+  if (typeof document !== 'undefined' && document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyOnce, { once: true });
+  } else {
+    applyOnce();
+  }
 
   Wized.on('requestend', () => updateUrlFromWized(Wized));
 }

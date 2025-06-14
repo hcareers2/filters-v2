@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.24] - 2025-06-14
+
+### Fixed
+
+- Defer URL parameter synchronization until DOM is ready and ensure patched requests wait for DOM readiness.
+
 ## [1.0.22] - 2025-06-14
 
 ### Fixed
@@ -29,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - There was an issue when changing radio selection, which is now fixed.
 
+[1.0.24]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.24
 [1.0.22]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.22
 [1.0.21]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.21
 [1.0.20]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.20
