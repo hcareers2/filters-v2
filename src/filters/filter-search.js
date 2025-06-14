@@ -1,5 +1,3 @@
-/* global clearTimeout, Event */
-
 /**
  * FilterSearchManager: Main class responsible for managing search-based filtering functionality
  *

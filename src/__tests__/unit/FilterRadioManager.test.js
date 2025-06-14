@@ -1,8 +1,6 @@
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import FilterRadioManager from '../../filters/filter-radio';
 
-/* global describe, beforeEach, afterEach, test, expect, jest */
-
 import Wized from '../../__mocks__/wized';
 
 describe('FilterRadioManager', () => {
