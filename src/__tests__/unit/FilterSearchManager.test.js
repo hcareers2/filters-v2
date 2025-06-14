@@ -1,5 +1,3 @@
-/* global describe, beforeEach, afterEach, test, expect, jest, Event */
-
 import Wized from '../../__mocks__/wized';
 import FilterSearchManager from '../../filters/filter-search';
 

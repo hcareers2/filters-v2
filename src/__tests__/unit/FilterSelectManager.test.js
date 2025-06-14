@@ -1,5 +1,3 @@
-/* global describe, beforeEach, afterEach, test, expect, jest */
-
 jest.mock('../../filters/filter-select');
 import { FilterSelectManager } from '../../filters/filter-select';
 import Wized from '../../__mocks__/wized';

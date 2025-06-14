@@ -1,5 +1,3 @@
-/* global jest, describe, beforeEach, it, expect */
-
 import FilterResetManager from '../../filters/filter-reset';
 import Wized from '../../__mocks__/wized';
 

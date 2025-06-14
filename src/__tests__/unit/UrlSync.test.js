@@ -1,9 +1,4 @@
-/* global describe, beforeEach, afterEach, test, expect */
-import {
-  applyUrlParamsToWized,
-  updateUrlFromWized,
-  syncInputsFromWized,
-} from '../../utils/url-sync.js';
+import { applyUrlParamsToWized, updateUrlFromWized } from '../../utils/url-sync.js';
 
 // Helper to mock window.location
 function setSearch(search) {
@@ -72,9 +67,11 @@ describe('URL Sync Utilities', () => {
   test('updateUrlFromWized writes variables to query string', () => {
     const Wized = { data: { v: { foo: 'bar', empty: '', list: ['a', 'b'] } } };
     setSearch('');
-    const replaceSpy = jest.spyOn(window.history, 'replaceState').mockImplementation((_, __, url) => {
-      window.location = new URL(`https://example.com${url}`);
-    });
+    const replaceSpy = jest
+      .spyOn(window.history, 'replaceState')
+      .mockImplementation((_, __, url) => {
+        window.location = new URL(`https://example.com${url}`);
+      });
     updateUrlFromWized(Wized);
     expect(replaceSpy).toHaveBeenCalled();
     expect(window.location.search).toBe('?foo=bar&list=a%2Cb');
