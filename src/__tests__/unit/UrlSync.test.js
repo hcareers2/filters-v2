@@ -1,4 +1,4 @@
-import { applyUrlParamsToWized, updateUrlFromWized } from '../../utils/url-sync.js';
+import { applyUrlParamsToWized, updateUrlFromWized, initUrlSync } from '../../utils/url-sync.js';
 
 // Helper to mock window.location
 function setSearch(search) {
@@ -110,5 +110,31 @@ describe('URL Sync Utilities', () => {
     expect(replaceSpy).toHaveBeenCalled();
     expect(window.location.search).toBe('?foo=bar&list=a%2Cb');
     replaceSpy.mockRestore();
+  });
+
+  test('initUrlSync applies params before first execute', async () => {
+    document.body.innerHTML = '';
+    const input = document.createElement('input');
+    input.setAttribute('w-filter-search-variable', 'foo');
+    document.body.appendChild(input);
+    setSearch('?foo=baz');
+    const execute = jest.fn().mockResolvedValue('ok');
+    const Wized = { data: { v: { foo: '' } }, requests: { execute }, on: jest.fn() };
+    initUrlSync(Wized);
+    expect(Wized.data.v.foo).toBe('baz');
+    const result = await Wized.requests.execute('req');
+    expect(result).toBe('ok');
+    expect(execute).toHaveBeenCalledWith('req');
+  });
+
+  test('patched execute behaves normally with no params', async () => {
+    document.body.innerHTML = '';
+    setSearch('');
+    const execute = jest.fn().mockResolvedValue('done');
+    const Wized = { data: { v: { foo: '' } }, requests: { execute }, on: jest.fn() };
+    initUrlSync(Wized);
+    const result = await Wized.requests.execute('normal');
+    expect(result).toBe('done');
+    expect(execute).toHaveBeenCalledWith('normal');
   });
 });
