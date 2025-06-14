@@ -1,5 +1,5 @@
 {
-  "name": "wized-filter-and-pagination",
+  "name": "filterandlist-for-wized",
   "version": "1.0.19",
   "description": "Wized filter and pagination functionality",
   "main": "dist/index.min.js",

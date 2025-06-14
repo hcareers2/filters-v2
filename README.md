@@ -17,7 +17,7 @@ A no-code solution that seamlessly integrates filtering and pagination into your
 - [🌐 Get the Webflow Cloneable](https://webflow.com/made-in-webflow/website/filters-with-pagination-tutorial)
 - [🔥Grab the Wized Cloneable](https://app.wized.com/clone/Zz9JP3G6H6ahstd4yxdT)
 - [🔥Grab the Xano Snippet](https://www.xano.com/snippet/96QVQ8A7)
-- [📦 View the NPM Package](https://www.npmjs.com/package/wized-filter-and-pagination)
+- [📦 View the NPM Package](https://www.npmjs.com/package/filterandlist-for-wized)
 - [☕ Buy Me a Coffee](https://buymeacoffee.com/aonnoy)
 - [🛠️ Create an Account on Wized (Affiliate Link)](https://www.wized.com/?via=aonnoy)
 - [🛠️ Create an Account On Xano (Affiliate Link)](https://xano.io/mgfswoqi)
@@ -64,7 +64,7 @@ To use **Wized Filter and Pagination**, include the CDN link in the `<head>` tag
 <script
   async
   type="module"
-  src="https://cdn.jsdelivr.net/npm/wized-filter-and-pagination@1/dist/index.min.js"
+  src="https://cdn.jsdelivr.net/npm/filterandlist-for-wized@1/dist/index.min.js"
 ></script>
 ```
 
