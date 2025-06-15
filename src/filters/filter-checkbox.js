@@ -352,7 +352,9 @@ class FilterCheckboxManager {
       this.setupResetButton(group);
 
       elements.forEach((checkbox) => {
-        checkbox.addEventListener('click', () => {
+        const input = checkbox.querySelector('input[type="checkbox"]');
+
+        const handler = () => {
           this.handleCheckboxClick(
             checkbox,
             elements,
@@ -360,7 +362,12 @@ class FilterCheckboxManager {
             paginationVariable,
             filterRequest
           );
-        });
+        };
+
+        checkbox.addEventListener('click', handler);
+        if (input) {
+          input.addEventListener('change', handler);
+        }
       });
 
       if (!isStatic && requestName) {

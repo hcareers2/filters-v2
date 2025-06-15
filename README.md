@@ -135,6 +135,7 @@ To implement infinite pagination correctly, follow these key setup steps:
 - You can create multiple checkbox filters as needed. Ensure that attributes with unique values are distinct to prevent conflicts.
 - Attributes should be applied to the **checkbox wrapper**.
 - Checkboxes can be **static** or **dynamically generated**. Follow the attribute table below for setup details.
+- Ensure the `<label>` wraps its `<input>` or keep them together. The script now listens to both the label and the input element.
   ![Webflow Screenshot](https://cdn.prod.website-files.com/657244ba4d804c29a2ef5ce0/67b687f78e3a3ff529099e8f_Screenshot%202025-02-20%20at%2001.39.36.png)
   ![Webflow Screenshot](https://cdn.prod.website-files.com/657244ba4d804c29a2ef5ce0/67b68800508157d6423be4ea_Screenshot%202025-02-20%20at%2001.39.47.png)
 
@@ -167,6 +168,7 @@ To implement infinite pagination correctly, follow these key setup steps:
 - You can create multiple radio selects as needed. Ensure that attributes with unique values are distinct to prevent conflicts.
 - Attributes should be applied to the **radio select wrapper**.
 - Radio Selects can be **static** or **dynamically generated**. Follow the attribute table below for setup details.
+- Ensure each `<label>` wraps its radio `<input>` or keep them adjacent. The script listens to both the label and the input.
   ![Webflow Screenshot](https://cdn.prod.website-files.com/657244ba4d804c29a2ef5ce0/67b68f8bb032b0bef6e4ddf1_Screenshot%202025-02-20%20at%2002.11.52.png)
   ![Webflow Screenshot](https://cdn.prod.website-files.com/657244ba4d804c29a2ef5ce0/67b68f97f8c022a57e51ba86_Screenshot%202025-02-20%20at%2002.11.58.png)
 

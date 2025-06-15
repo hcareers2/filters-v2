@@ -32,7 +32,7 @@ describe('FilterRadioManager', () => {
       }),
       querySelector: jest.fn().mockImplementation((selector) => {
         if (selector === 'input[type="radio"]') {
-          return { checked: false };
+          return { checked: false, addEventListener: jest.fn() };
         }
         return null;
       }),
@@ -118,6 +118,65 @@ describe('FilterRadioManager', () => {
       manager.state.monitoredGroups = new Set(['testWized-testVar']);
       manager.setupGroupEventHandlers(mockGroup);
       expect(mockRadio.addEventListener).not.toHaveBeenCalled();
+    });
+
+    test('should trigger handler when input is changed', async () => {
+      const inputEl = { addEventListener: jest.fn(), checked: false };
+
+      mockRadio.querySelector.mockImplementation((selector) => {
+        if (selector === 'input[type="radio"]') return inputEl;
+        if (selector === '[w-filter-radio-label]') return { textContent: 'Test Label' };
+        if (selector === '.w-form-formradioinput--inputType-custom') {
+          return {
+            classList: {
+              add: jest.fn(),
+              remove: jest.fn(),
+              contains: jest.fn().mockReturnValue(false),
+            },
+          };
+        }
+        if (selector === '.w-form-formradioinput--inputType-custom.w--redirected-checked') {
+          return null;
+        }
+        return null;
+      });
+
+      mockRadio.getAttribute.mockImplementation((attr) => {
+        switch (attr) {
+          case 'w-filter-radio-category':
+            return 'testCategory';
+          case 'w-filter-radio-variable':
+            return 'testVar';
+          case 'w-filter-pagination-current-variable':
+            return 'currentPage';
+          case 'w-filter-request':
+            return 'filterRequest';
+          default:
+            return null;
+        }
+      });
+
+      document.querySelector = jest.fn().mockImplementation(() => null);
+
+      const group = {
+        elements: [mockRadio],
+        wizedName: 'testWized',
+        variableName: 'testVar',
+        paginationVariable: 'currentPage',
+        filterRequest: 'filterRequest',
+        isStatic: true,
+      };
+
+      manager.setupGroupEventHandlers(group);
+
+      expect(inputEl.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+
+      const handler = inputEl.addEventListener.mock.calls[0][1];
+      handler({ preventDefault: jest.fn() });
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(mockWized.requests.execute).toHaveBeenCalledWith('filterRequest');
     });
   });
 

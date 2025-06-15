@@ -212,6 +212,62 @@ describe('FilterCheckboxManager', () => {
       expect(result.group1.elements).toHaveLength(2);
       expect(result.group1.isStatic).toBe(false);
     });
+
+    test('should trigger handler when input is changed', async () => {
+      const inputEl = { addEventListener: jest.fn() };
+
+      mockCheckbox.querySelector.mockImplementation((selector) => {
+        if (selector === 'input[type="checkbox"]') return inputEl;
+        if (selector === '[w-filter-checkbox-label]') return { textContent: 'Test Label' };
+        if (selector === '.w-checkbox-input--inputType-custom') {
+          return {
+            classList: {
+              add: jest.fn(),
+              remove: jest.fn(),
+              contains: jest.fn().mockReturnValue(false),
+            },
+          };
+        }
+        if (selector === '.w-checkbox-input--inputType-custom.w--redirected-checked') {
+          return true;
+        }
+        return null;
+      });
+
+      mockCheckbox.getAttribute.mockImplementation((attr) => {
+        switch (attr) {
+          case 'w-filter-checkbox-category':
+            return 'testCategory';
+          case 'w-filter-checkbox-variable':
+            return 'testVar';
+          case 'w-filter-pagination-current-variable':
+            return 'page1';
+          case 'w-filter-request':
+            return 'filterRequest';
+          default:
+            return null;
+        }
+      });
+
+      const group = {
+        elements: [mockCheckbox],
+        wizedName: 'group1',
+        variableName: 'testVar',
+        paginationVariable: 'page1',
+        filterRequest: 'filterRequest',
+        isStatic: true,
+      };
+
+      manager.setupGroupEventHandlers(group);
+
+      expect(inputEl.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+
+      const handler = inputEl.addEventListener.mock.calls[0][1];
+      handler();
+      jest.runAllTimers();
+
+      expect(mockWized.requests.execute).toHaveBeenCalledWith('filterRequest');
+    });
   });
 
   describe('checkbox state handling', () => {
