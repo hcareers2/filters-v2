@@ -75,6 +75,11 @@ class FilterCheckboxManager {
         console.error('Error updating checkbox visual state:', error);
       }
     }
+
+    const actualInput = checkbox.querySelector('input[type="checkbox"]');
+    if (actualInput) {
+      actualInput.checked = checked;
+    }
   }
 
   // =============================================

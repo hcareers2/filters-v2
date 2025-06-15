@@ -30,7 +30,12 @@ describe('FilterRadioManager', () => {
             return null;
         }
       }),
-      querySelector: jest.fn(),
+      querySelector: jest.fn().mockImplementation((selector) => {
+        if (selector === 'input[type="radio"]') {
+          return { checked: false };
+        }
+        return null;
+      }),
       addEventListener: jest.fn(),
       classList: {
         add: jest.fn(),
@@ -119,10 +124,16 @@ describe('FilterRadioManager', () => {
   describe('visual state handling', () => {
     test('should update visual state correctly', () => {
       const mockCustomRadio = { classList: { add: jest.fn(), remove: jest.fn() } };
-      mockRadio.querySelector.mockReturnValue(mockCustomRadio);
+      const inputEl = { checked: false };
+      mockRadio.querySelector.mockImplementation((selector) => {
+        if (selector === '.w-form-formradioinput--inputType-custom') return mockCustomRadio;
+        if (selector === 'input[type="radio"]') return inputEl;
+        return null;
+      });
 
       manager.updateRadioVisualState(mockRadio, true);
       expect(mockCustomRadio.classList.add).toHaveBeenCalledWith('w--redirected-checked');
+      expect(inputEl.checked).toBe(true);
     });
 
     test('should handle errors in classList operations', () => {
@@ -137,7 +148,12 @@ describe('FilterRadioManager', () => {
           }),
         },
       };
-      mockRadio.querySelector.mockReturnValue(mockCustomRadio);
+      const inputEl = { checked: false };
+      mockRadio.querySelector.mockImplementation((selector) => {
+        if (selector === '.w-form-formradioinput--inputType-custom') return mockCustomRadio;
+        if (selector === 'input[type="radio"]') return inputEl;
+        return null;
+      });
 
       manager.updateRadioVisualState(mockRadio, true);
       expect(consoleErrorSpy).toHaveBeenCalledWith(

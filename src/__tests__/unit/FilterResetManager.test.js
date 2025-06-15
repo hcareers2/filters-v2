@@ -5,7 +5,7 @@ import Wized from '../../__mocks__/wized';
 window.__TESTING__ = true;
 
 // Mock document methods
-document.querySelector = jest.fn();
+document.querySelectorAll = jest.fn();
 
 // Mock console methods
 console.log = jest.fn();
@@ -42,8 +42,8 @@ describe('FilterResetManager', () => {
       getAttribute: jest.fn(),
     };
 
-    // Setup document.querySelector mock
-    document.querySelector.mockReturnValue(mockResetButton);
+    // Setup document.querySelectorAll mock
+    document.querySelectorAll.mockReturnValue([mockResetButton]);
 
     // Create manager instance
     manager = new FilterResetManager(mockWized);
@@ -58,13 +58,13 @@ describe('FilterResetManager', () => {
       expect(manager.state).toEqual({
         initialized: true,
         processingReset: false,
-        mainResetButton: mockResetButton,
+        mainResetButtons: [mockResetButton],
       });
     });
 
     it('should not initialize twice', () => {
       manager.initialize();
-      expect(document.querySelector).toHaveBeenCalledTimes(1);
+      expect(document.querySelectorAll).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -148,9 +148,9 @@ describe('FilterResetManager', () => {
     });
 
     it('should handle missing reset button', () => {
-      document.querySelector.mockReturnValue(null);
+      document.querySelectorAll.mockReturnValue([]);
       const newManager = new FilterResetManager(mockWized);
-      expect(newManager.state.mainResetButton).toBeNull();
+      expect(newManager.state.mainResetButtons).toEqual([]);
     });
 
     it('should only reset when active filters exist', async () => {

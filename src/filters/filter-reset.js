@@ -16,7 +16,7 @@ export default class FilterResetManager {
     this.state = {
       initialized: false,
       processingReset: false, // Prevent multiple simultaneous resets
-      mainResetButton: null,
+      mainResetButtons: [],
     };
 
     // Expose global reset state
@@ -233,33 +233,35 @@ export default class FilterResetManager {
    */
   setupMainResetButton() {
     console.log('=== Setting up Reset Button ===');
-    const resetButton = document.querySelector('[w-filter-reset="main-reset"]');
-    console.log('Reset button found:', resetButton);
+    const resetButtons = document.querySelectorAll('[w-filter-reset="main-reset"]');
+    console.log('Reset buttons found:', resetButtons);
 
-    if (!resetButton) {
+    if (!resetButtons || resetButtons.length === 0) {
       console.log('No reset button found, exiting setup');
       return;
     }
 
-    this.state.mainResetButton = resetButton;
+    this.state.mainResetButtons = Array.from(resetButtons);
 
-    resetButton.addEventListener('click', async (e) => {
-      e.preventDefault();
-      console.log('=== Reset Button Click Event Started ===');
-      console.log('Event timestamp:', new Date().toISOString());
+    this.state.mainResetButtons.forEach((button) => {
+      button.addEventListener('click', async (e) => {
+        e.preventDefault();
+        console.log('=== Reset Button Click Event Started ===');
+        console.log('Event timestamp:', new Date().toISOString());
 
-      // Check if any filters are active
-      console.log('Checking for active filters...');
-      const hasActiveFilters = this.checkForActiveFilters();
-      console.log('Active filters check result:', hasActiveFilters);
+        // Check if any filters are active
+        console.log('Checking for active filters...');
+        const hasActiveFilters = this.checkForActiveFilters();
+        console.log('Active filters check result:', hasActiveFilters);
 
-      if (hasActiveFilters) {
-        console.log('Active filters found, proceeding with reset');
-        await this.resetAllFilters(resetButton);
-      } else {
-        console.log('No active filters found, skipping reset');
-      }
-      console.log('=== Reset Button Click Event Completed ===');
+        if (hasActiveFilters) {
+          console.log('Active filters found, proceeding with reset');
+          await this.resetAllFilters(button);
+        } else {
+          console.log('No active filters found, skipping reset');
+        }
+        console.log('=== Reset Button Click Event Completed ===');
+      });
     });
     console.log('Reset button setup complete');
   }
