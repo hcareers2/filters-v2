@@ -386,10 +386,17 @@ export default class FilterRadioManager {
       this.setupResetButton(group);
 
       elements.forEach((radio) => {
-        radio.addEventListener('click', (e) => {
-          e.preventDefault();
+        const input = radio.querySelector('input[type="radio"]');
+
+        const handler = (e) => {
+          if (e) e.preventDefault();
           this.handleRadioClick(radio, elements, variableName, paginationVariable, filterRequest);
-        });
+        };
+
+        radio.addEventListener('click', handler);
+        if (input) {
+          input.addEventListener('change', handler);
+        }
       });
 
       if (!isStatic && requestName) {
