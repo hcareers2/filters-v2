@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Reapply URL parameters after full page load to override persisted values.
 
+## [1.0.26] - 2025-06-15
+
+### Added
+
+- Allow multiple `main-reset` buttons on a page.
+- Checkbox and radio resets now uncheck their underlying `<input>` elements to keep the DOM state consistent.
+
 ## [1.0.24] - 2025-06-14
 
 ### Fixed
@@ -41,8 +48,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - There was an issue when changing radio selection, which is now fixed.
 
-[1.0.24]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.24
+[1.0.26]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.26
 [1.0.25]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.25
+[1.0.24]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.24
 [1.0.22]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.22
 [1.0.21]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.21
 [1.0.20]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.20

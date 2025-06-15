@@ -33,6 +33,9 @@ describe('FilterCheckboxManager', () => {
             },
           };
         }
+        if (selector === 'input[type="checkbox"]') {
+          return { checked: false };
+        }
         return null;
       }),
     };
@@ -131,11 +134,17 @@ describe('FilterCheckboxManager', () => {
           remove: jest.fn(),
         },
       };
-      mockCheckbox.querySelector.mockReturnValue(customCheckbox);
+      const inputEl = { checked: false };
+      mockCheckbox.querySelector.mockImplementation((selector) => {
+        if (selector === '.w-checkbox-input--inputType-custom') return customCheckbox;
+        if (selector === 'input[type="checkbox"]') return inputEl;
+        return null;
+      });
 
       manager.updateCheckboxVisualState(mockCheckbox, true);
       expect(customCheckbox.classList.add).toHaveBeenCalledWith('w--redirected-checked');
       expect(customCheckbox.classList.remove).not.toHaveBeenCalled();
+      expect(inputEl.checked).toBe(true);
     });
 
     test('should update checkbox visual state to unchecked', () => {
@@ -145,11 +154,17 @@ describe('FilterCheckboxManager', () => {
           remove: jest.fn(),
         },
       };
-      mockCheckbox.querySelector.mockReturnValue(customCheckbox);
+      const inputEl = { checked: true };
+      mockCheckbox.querySelector.mockImplementation((selector) => {
+        if (selector === '.w-checkbox-input--inputType-custom') return customCheckbox;
+        if (selector === 'input[type="checkbox"]') return inputEl;
+        return null;
+      });
 
       manager.updateCheckboxVisualState(mockCheckbox, false);
       expect(customCheckbox.classList.remove).toHaveBeenCalledWith('w--redirected-checked');
       expect(customCheckbox.classList.add).not.toHaveBeenCalled();
+      expect(inputEl.checked).toBe(false);
     });
 
     test('should handle missing custom checkbox element', () => {

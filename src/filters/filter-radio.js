@@ -69,6 +69,11 @@ export default class FilterRadioManager {
     } else {
       console.warn('Custom radio element not found');
     }
+
+    const actualInput = radio.querySelector('input[type="radio"]');
+    if (actualInput) {
+      actualInput.checked = checked;
+    }
   }
 
   // =============================================

@@ -441,7 +441,7 @@ Although the **Sort Filter** is static, it requires a **separate div block (opti
 ## Create Reset All and its attributes list
 
 - This feature allows users to reset all active filters with a single click.
-- It requires a **single link block element**, which will act as the reset trigger.
+- It requires **one or more link block elements**, each acting as the reset trigger.
 - The following attributes must be applied to the reset link block.
   ![Webflow Screenshot](https://cdn.prod.website-files.com/657244ba4d804c29a2ef5ce0/67b69ca0335a6e59be6bc7b1_Screenshot%202025-02-20%20at%2003.07.41.png)
   ![Webflow Screenshot](https://cdn.prod.website-files.com/657244ba4d804c29a2ef5ce0/67b69ca6d0b1e9668cb7ce65_Screenshot%202025-02-20%20at%2003.07.48.png)
