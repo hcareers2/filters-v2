@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.30] - 2025-06-16
 ### Fixed
 - Retry initial request execution until requests become available.
+- Increased the polling window so late-loading requests still run.
  
 ## [1.0.24] - 2025-06-14
 

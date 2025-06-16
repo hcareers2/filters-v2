@@ -150,7 +150,7 @@ export function updateUrlFromWized(Wized) {
 
 export async function executePendingRequests(
   Wized,
-  { requestName, retries = 40, delay = 50 } = {}
+  { requestName, retries = 200, delay = 50 } = {}
 ) {
   if (!Wized.requests || typeof Wized.requests.execute !== 'function') return;
 
