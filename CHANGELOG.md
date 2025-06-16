@@ -19,9 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Checkbox and radio resets now uncheck their underlying `<input>` elements to keep the DOM state consistent.
 
-## [1.0.27] - YYYY-MM-DD
+## [1.0.27] - 2025-06-15
 ### Added
 - Listen for clicks or changes on checkbox and radio inputs, so either the label or input triggers filtering.
+
+## [1.0.28] - 2025-06-16
+### Fixed
+- Checkbox and radio inputs now reflect URL parameter values by updating their `checked` state.
 
 ## [1.0.24] - 2025-06-14
 
@@ -54,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - There was an issue when changing radio selection, which is now fixed.
 
 [1.0.27]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.27
+[1.0.28]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.28
 [1.0.26]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.26
 [1.0.25]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.25
 [1.0.24]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.24

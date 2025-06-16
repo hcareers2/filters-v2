@@ -71,12 +71,19 @@ export function syncInputsFromWized(Wized) {
     document.querySelectorAll(`label[w-filter-checkbox-variable="${key}"]`).forEach((label) => {
       const text = label.querySelector('[w-filter-checkbox-label]')?.textContent || '';
       const custom = label.querySelector('.w-checkbox-input--inputType-custom');
+      const input = label.querySelector('input[type="checkbox"]');
+      const isChecked = arrValue.includes(text);
+
       if (custom) {
-        if (arrValue.includes(text)) {
+        if (isChecked) {
           custom.classList.add('w--redirected-checked');
         } else {
           custom.classList.remove('w--redirected-checked');
         }
+      }
+
+      if (input) {
+        input.checked = isChecked;
       }
     });
 
@@ -84,12 +91,19 @@ export function syncInputsFromWized(Wized) {
     document.querySelectorAll(`label[w-filter-radio-variable="${key}"]`).forEach((label) => {
       const text = label.querySelector('[w-filter-radio-label]')?.textContent || '';
       const custom = label.querySelector('.w-form-formradioinput--inputType-custom');
+      const input = label.querySelector('input[type="radio"]');
+      const isChecked = normalized === text;
+
       if (custom) {
-        if (normalized === text) {
+        if (isChecked) {
           custom.classList.add('w--redirected-checked');
         } else {
           custom.classList.remove('w--redirected-checked');
         }
+      }
+
+      if (input) {
+        input.checked = isChecked;
       }
     });
   });

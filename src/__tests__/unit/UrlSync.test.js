@@ -58,20 +58,26 @@ describe('URL Sync Utilities', () => {
     labelA.setAttribute('w-filter-checkbox-variable', 'list');
     const customA = document.createElement('div');
     customA.classList.add('w-checkbox-input--inputType-custom');
+    const inputA = document.createElement('input');
+    inputA.type = 'checkbox';
     const textA = document.createElement('span');
     textA.setAttribute('w-filter-checkbox-label', '');
     textA.textContent = 'a';
     labelA.appendChild(customA);
+    labelA.appendChild(inputA);
     labelA.appendChild(textA);
 
     const labelB = document.createElement('label');
     labelB.setAttribute('w-filter-checkbox-variable', 'list');
     const customB = document.createElement('div');
     customB.classList.add('w-checkbox-input--inputType-custom');
+    const inputB = document.createElement('input');
+    inputB.type = 'checkbox';
     const textB = document.createElement('span');
     textB.setAttribute('w-filter-checkbox-label', '');
     textB.textContent = 'b';
     labelB.appendChild(customB);
+    labelB.appendChild(inputB);
     labelB.appendChild(textB);
 
     document.body.appendChild(searchInput);
@@ -85,6 +91,8 @@ describe('URL Sync Utilities', () => {
     expect(searchInput.value).toBe('bar');
     expect(customA.classList.contains('w--redirected-checked')).toBe(true);
     expect(customB.classList.contains('w--redirected-checked')).toBe(true);
+    expect(inputA.checked).toBe(true);
+    expect(inputB.checked).toBe(true);
   });
 
   test('syncInputsFromWized uses empty string for null values', () => {
