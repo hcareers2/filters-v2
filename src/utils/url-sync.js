@@ -148,17 +148,54 @@ export function updateUrlFromWized(Wized) {
   window.history.replaceState({}, '', newUrl);
 }
 
-export async function executePendingRequests(Wized) {
+export async function executePendingRequests(
+  Wized,
+  { requestName, retries = 200, delay = 50 } = {}
+) {
   if (!Wized.requests || typeof Wized.requests.execute !== 'function') return;
 
-  const requests = Wized?.data?.r || {};
-  for (const [name, info] of Object.entries(requests)) {
-    if (!info || !info.hasRequested) {
-      try {
-        await Wized.requests.execute(name);
-      } catch (err) {
-        console.error('Failed to execute request', name, err);
+  let attempts = 0;
+  while (attempts <= retries) {
+    const requests = Wized?.data?.r || {};
+
+    if (requestName) {
+      const info = requests[requestName];
+      if (info) {
+        if (!info.hasRequested) {
+          try {
+            await Wized.requests.execute(requestName);
+          } catch (err) {
+            console.error('Failed to execute request', requestName, err);
+          }
+        }
+        break;
       }
+    }
+
+    const entries = Object.entries(requests);
+    if (entries.length > 0) {
+      for (const [name, info] of entries) {
+        if (!info || !info.hasRequested) {
+          try {
+            await Wized.requests.execute(name);
+          } catch (err) {
+            console.error('Failed to execute request', name, err);
+          }
+        }
+      }
+      break;
+    }
+
+    attempts += 1;
+    await new Promise((resolve) => setTimeout(resolve, delay));
+
+    if (attempts > retries && requestName) {
+      try {
+        await Wized.requests.execute(requestName);
+      } catch (err) {
+        console.error('Failed to execute request', requestName, err);
+      }
+      break;
     }
   }
 }
@@ -170,7 +207,13 @@ export function initUrlSync(Wized) {
     if (!paramsApplied) {
       paramsApplied = true;
       applyUrlParamsToWized(Wized);
-      await executePendingRequests(Wized);
+      if (typeof document !== 'undefined') {
+        const wrapper = document.querySelector('[w-filter-wrapper]');
+        const requestName = wrapper?.getAttribute('w-filter-request') || undefined;
+        await executePendingRequests(Wized, { requestName });
+      } else {
+        await executePendingRequests(Wized);
+      }
     }
   };
 

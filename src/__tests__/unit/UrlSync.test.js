@@ -1,4 +1,9 @@
-import { applyUrlParamsToWized, updateUrlFromWized, initUrlSync } from '../../utils/url-sync.js';
+import {
+  applyUrlParamsToWized,
+  updateUrlFromWized,
+  initUrlSync,
+  executePendingRequests,
+} from '../../utils/url-sync.js';
 
 // Helper to mock window.location
 function setSearch(search) {
@@ -190,6 +195,11 @@ describe('URL Sync Utilities', () => {
   test('executePendingRequests runs pending requests', async () => {
     setSearch('');
     Object.defineProperty(document, 'readyState', { value: 'complete', configurable: true });
+    const wrapper = document.createElement('div');
+    wrapper.setAttribute('w-filter-wrapper', '');
+    wrapper.setAttribute('w-filter-request', 'first');
+    document.body.appendChild(wrapper);
+
     const execute = jest.fn().mockResolvedValue('ok');
     const Wized = {
       data: {
@@ -203,5 +213,36 @@ describe('URL Sync Utilities', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(execute).toHaveBeenCalledTimes(1);
     expect(execute).toHaveBeenCalledWith('first');
+  });
+
+  test('executePendingRequests waits for requests to appear', async () => {
+    setSearch('');
+    Object.defineProperty(document, 'readyState', { value: 'complete', configurable: true });
+    const wrapper = document.createElement('div');
+    wrapper.setAttribute('w-filter-wrapper', '');
+    wrapper.setAttribute('w-filter-request', 'first');
+    document.body.appendChild(wrapper);
+
+    const execute = jest.fn().mockResolvedValue('ok');
+    const Wized = {
+      data: { v: {}, r: {} },
+      requests: { execute },
+      on: jest.fn(),
+    };
+    initUrlSync(Wized);
+    setTimeout(() => {
+      Wized.data.r.first = { hasRequested: false };
+    }, 30);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(execute).toHaveBeenCalledWith('first');
+  });
+
+  test('executePendingRequests executes when info never appears', async () => {
+    const execute = jest.fn().mockResolvedValue('ok');
+    const Wized = { data: { v: {}, r: {} }, requests: { execute }, on: jest.fn() };
+    await executePendingRequests(Wized, { requestName: 'ghost', retries: 1, delay: 10 });
+    expect(execute).toHaveBeenCalledWith('ghost');
   });
 });
