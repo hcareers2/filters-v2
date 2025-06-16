@@ -148,13 +148,29 @@ export function updateUrlFromWized(Wized) {
   window.history.replaceState({}, '', newUrl);
 }
 
+export async function executePendingRequests(Wized) {
+  if (!Wized.requests || typeof Wized.requests.execute !== 'function') return;
+
+  const requests = Wized?.data?.r || {};
+  for (const [name, info] of Object.entries(requests)) {
+    if (!info || !info.hasRequested) {
+      try {
+        await Wized.requests.execute(name);
+      } catch (err) {
+        console.error('Failed to execute request', name, err);
+      }
+    }
+  }
+}
+
 export function initUrlSync(Wized) {
   let paramsApplied = false;
 
-  const applyOnce = () => {
+  const applyOnce = async () => {
     if (!paramsApplied) {
-      applyUrlParamsToWized(Wized);
       paramsApplied = true;
+      applyUrlParamsToWized(Wized);
+      await executePendingRequests(Wized);
     }
   };
 
@@ -171,21 +187,33 @@ export function initUrlSync(Wized) {
     const originalExecute = Wized.requests.execute.bind(Wized.requests);
     Wized.requests.execute = async (...args) => {
       await domReady;
-      applyOnce();
+      await applyOnce();
       return originalExecute(...args);
     };
   }
 
   // Apply params once DOM is ready
   if (typeof document !== 'undefined' && document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyOnce, { once: true });
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+        applyOnce();
+      },
+      { once: true }
+    );
   } else {
     applyOnce();
   }
 
   // Ensure params override persisted state after all resources load
   if (typeof window !== 'undefined') {
-    window.addEventListener('load', applyOnce, { once: true });
+    window.addEventListener(
+      'load',
+      () => {
+        applyOnce();
+      },
+      { once: true }
+    );
   }
 
   Wized.on('requestend', () => updateUrlFromWized(Wized));
