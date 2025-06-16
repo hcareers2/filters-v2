@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Checkbox and radio inputs now reflect URL parameter values by updating their `checked` state.
 
+## [1.0.29] - YYYY-MM-DD
+### Added
+- Automatically execute pending requests after applying URL parameters.
+ 
 ## [1.0.24] - 2025-06-14
 
 ### Fixed
@@ -66,3 +70,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.0.21]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.21
 [1.0.20]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.20
 [1.0.19]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.19
+[1.0.29]: https://github.com/aonnoy/wized-filter-pagination/releases/tag/v1.0.29
