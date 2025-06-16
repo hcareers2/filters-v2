@@ -148,7 +148,10 @@ export function updateUrlFromWized(Wized) {
   window.history.replaceState({}, '', newUrl);
 }
 
-export async function executePendingRequests(Wized, { requestName, retries = 5, delay = 50 } = {}) {
+export async function executePendingRequests(
+  Wized,
+  { requestName, retries = 40, delay = 50 } = {}
+) {
   if (!Wized.requests || typeof Wized.requests.execute !== 'function') return;
 
   let attempts = 0;
@@ -157,39 +160,43 @@ export async function executePendingRequests(Wized, { requestName, retries = 5, 
 
     if (requestName) {
       const info = requests[requestName];
-      if (!info) {
-        attempts += 1;
-        await new Promise((resolve) => setTimeout(resolve, delay));
-        continue;
+      if (info) {
+        if (!info.hasRequested) {
+          try {
+            await Wized.requests.execute(requestName);
+          } catch (err) {
+            console.error('Failed to execute request', requestName, err);
+          }
+        }
+        break;
       }
+    }
 
-      if (!info.hasRequested) {
-        try {
-          await Wized.requests.execute(requestName);
-        } catch (err) {
-          console.error('Failed to execute request', requestName, err);
+    const entries = Object.entries(requests);
+    if (entries.length > 0) {
+      for (const [name, info] of entries) {
+        if (!info || !info.hasRequested) {
+          try {
+            await Wized.requests.execute(name);
+          } catch (err) {
+            console.error('Failed to execute request', name, err);
+          }
         }
       }
       break;
     }
 
-    const entries = Object.entries(requests);
-    if (entries.length === 0) {
-      attempts += 1;
-      await new Promise((resolve) => setTimeout(resolve, delay));
-      continue;
-    }
+    attempts += 1;
+    await new Promise((resolve) => setTimeout(resolve, delay));
 
-    for (const [name, info] of entries) {
-      if (!info || !info.hasRequested) {
-        try {
-          await Wized.requests.execute(name);
-        } catch (err) {
-          console.error('Failed to execute request', name, err);
-        }
+    if (attempts > retries && requestName) {
+      try {
+        await Wized.requests.execute(requestName);
+      } catch (err) {
+        console.error('Failed to execute request', requestName, err);
       }
+      break;
     }
-    break;
   }
 }
 

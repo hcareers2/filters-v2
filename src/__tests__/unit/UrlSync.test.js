@@ -1,4 +1,9 @@
-import { applyUrlParamsToWized, updateUrlFromWized, initUrlSync } from '../../utils/url-sync.js';
+import {
+  applyUrlParamsToWized,
+  updateUrlFromWized,
+  initUrlSync,
+  executePendingRequests,
+} from '../../utils/url-sync.js';
 
 // Helper to mock window.location
 function setSearch(search) {
@@ -232,5 +237,12 @@ describe('URL Sync Utilities', () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(execute).toHaveBeenCalledWith('first');
+  });
+
+  test('executePendingRequests executes when info never appears', async () => {
+    const execute = jest.fn().mockResolvedValue('ok');
+    const Wized = { data: { v: {}, r: {} }, requests: { execute }, on: jest.fn() };
+    await executePendingRequests(Wized, { requestName: 'ghost', retries: 1, delay: 10 });
+    expect(execute).toHaveBeenCalledWith('ghost');
   });
 });
