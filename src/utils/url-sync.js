@@ -148,18 +148,37 @@ export function updateUrlFromWized(Wized) {
   window.history.replaceState({}, '', newUrl);
 }
 
-export async function executePendingRequests(Wized) {
+export async function executePendingRequests(
+  Wized,
+  {
+    retries = 5,
+    delay = 50,
+  } = {}
+) {
   if (!Wized.requests || typeof Wized.requests.execute !== 'function') return;
 
-  const requests = Wized?.data?.r || {};
-  for (const [name, info] of Object.entries(requests)) {
-    if (!info || !info.hasRequested) {
-      try {
-        await Wized.requests.execute(name);
-      } catch (err) {
-        console.error('Failed to execute request', name, err);
+  let attempts = 0;
+  while (attempts <= retries) {
+    const requests = Wized?.data?.r || {};
+    const entries = Object.entries(requests);
+
+    if (entries.length === 0) {
+      attempts += 1;
+      // Wait for requests to be populated
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      continue;
+    }
+
+    for (const [name, info] of entries) {
+      if (!info || !info.hasRequested) {
+        try {
+          await Wized.requests.execute(name);
+        } catch (err) {
+          console.error('Failed to execute request', name, err);
+        }
       }
     }
+    break;
   }
 }
 

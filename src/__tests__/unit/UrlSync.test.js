@@ -204,4 +204,23 @@ describe('URL Sync Utilities', () => {
     expect(execute).toHaveBeenCalledTimes(1);
     expect(execute).toHaveBeenCalledWith('first');
   });
+
+  test('executePendingRequests waits for requests to appear', async () => {
+    setSearch('');
+    Object.defineProperty(document, 'readyState', { value: 'complete', configurable: true });
+    const execute = jest.fn().mockResolvedValue('ok');
+    const Wized = {
+      data: { v: {}, r: {} },
+      requests: { execute },
+      on: jest.fn(),
+    };
+    initUrlSync(Wized);
+    setTimeout(() => {
+      Wized.data.r.first = { hasRequested: false };
+    }, 30);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(execute).toHaveBeenCalledWith('first');
+  });
 });
