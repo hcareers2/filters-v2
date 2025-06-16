@@ -190,6 +190,11 @@ describe('URL Sync Utilities', () => {
   test('executePendingRequests runs pending requests', async () => {
     setSearch('');
     Object.defineProperty(document, 'readyState', { value: 'complete', configurable: true });
+    const wrapper = document.createElement('div');
+    wrapper.setAttribute('w-filter-wrapper', '');
+    wrapper.setAttribute('w-filter-request', 'first');
+    document.body.appendChild(wrapper);
+
     const execute = jest.fn().mockResolvedValue('ok');
     const Wized = {
       data: {
@@ -208,6 +213,11 @@ describe('URL Sync Utilities', () => {
   test('executePendingRequests waits for requests to appear', async () => {
     setSearch('');
     Object.defineProperty(document, 'readyState', { value: 'complete', configurable: true });
+    const wrapper = document.createElement('div');
+    wrapper.setAttribute('w-filter-wrapper', '');
+    wrapper.setAttribute('w-filter-request', 'first');
+    document.body.appendChild(wrapper);
+
     const execute = jest.fn().mockResolvedValue('ok');
     const Wized = {
       data: { v: {}, r: {} },

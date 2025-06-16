@@ -148,23 +148,34 @@ export function updateUrlFromWized(Wized) {
   window.history.replaceState({}, '', newUrl);
 }
 
-export async function executePendingRequests(
-  Wized,
-  {
-    retries = 5,
-    delay = 50,
-  } = {}
-) {
+export async function executePendingRequests(Wized, { requestName, retries = 5, delay = 50 } = {}) {
   if (!Wized.requests || typeof Wized.requests.execute !== 'function') return;
 
   let attempts = 0;
   while (attempts <= retries) {
     const requests = Wized?.data?.r || {};
-    const entries = Object.entries(requests);
 
+    if (requestName) {
+      const info = requests[requestName];
+      if (!info) {
+        attempts += 1;
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        continue;
+      }
+
+      if (!info.hasRequested) {
+        try {
+          await Wized.requests.execute(requestName);
+        } catch (err) {
+          console.error('Failed to execute request', requestName, err);
+        }
+      }
+      break;
+    }
+
+    const entries = Object.entries(requests);
     if (entries.length === 0) {
       attempts += 1;
-      // Wait for requests to be populated
       await new Promise((resolve) => setTimeout(resolve, delay));
       continue;
     }
@@ -189,7 +200,13 @@ export function initUrlSync(Wized) {
     if (!paramsApplied) {
       paramsApplied = true;
       applyUrlParamsToWized(Wized);
-      await executePendingRequests(Wized);
+      if (typeof document !== 'undefined') {
+        const wrapper = document.querySelector('[w-filter-wrapper]');
+        const requestName = wrapper?.getAttribute('w-filter-request') || undefined;
+        await executePendingRequests(Wized, { requestName });
+      } else {
+        await executePendingRequests(Wized);
+      }
     }
   };
 
